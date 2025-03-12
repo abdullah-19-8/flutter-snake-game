@@ -10,7 +10,7 @@ void main() {
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
+  const MyApp({super.key});
 
   // This widget is the root of your application.
   @override
@@ -18,14 +18,13 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Snake Game',
       debugShowCheckedModeBanner: false,
-      home: MultiProvider(providers: [
-        ChangeNotifierProvider<UserService>(
-          create: (_) => UserService(),
-        ),
-        ChangeNotifierProvider<RouteService>(
-          create: (_) => RouteService(),
-        ),
-      ], child: Menu()),
+      home: MultiProvider(
+        providers: [
+          ChangeNotifierProvider<UserService>(create: (_) => UserService()),
+          ChangeNotifierProvider<RouteService>(create: (_) => RouteService()),
+        ],
+        child: Menu(),
+      ),
     );
   }
 }

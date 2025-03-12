@@ -13,15 +13,16 @@ class Snake {
   int? price;
   int? diamonds;
 
-  Snake(
-      {required this.positions,
-      required this.color,
-      required this.name,
-      this.score = 0,
-      this.direction,
-      this.image,
-      this.price,
-      this.id,
-      this.coins = 0,
-      this.diamonds});
+  Snake({
+    required this.positions,
+    required this.color,
+    required this.name,
+    this.score = 0,
+    this.direction,
+    this.image,
+    this.price,
+    this.id,
+    this.coins = 0,
+    this.diamonds,
+  });
 }

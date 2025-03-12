@@ -7,14 +7,15 @@ class User {
   String currentBoard;
   int highScore;
 
-  User(
-      {required this.userCreated,
-      required this.boardsIds,
-      required this.currentBoard,
-      required this.currentSnake,
-      required this.coins,
-      required this.highScore,
-      required this.snakesIds});
+  User({
+    required this.userCreated,
+    required this.boardsIds,
+    required this.currentBoard,
+    required this.currentSnake,
+    required this.coins,
+    required this.highScore,
+    required this.snakesIds,
+  });
 
   fromMap(Map<dynamic, dynamic> map) {
     userCreated = map["userCreated"];

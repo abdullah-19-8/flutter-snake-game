@@ -15,7 +15,7 @@ import 'model/user.dart';
 
 class Game extends StatefulWidget {
   final User user;
-  const Game(this.user, {Key? key}) : super(key: key);
+  const Game(this.user, {super.key});
 
   @override
   State<Game> createState() => _GameState();
@@ -35,13 +35,9 @@ class _GameState extends State<Game> {
   List<Snake> placeHolderBots = [];
   List<String> directions = ["up", "down", "left", "right"];
 
-// ignore: prefer_typing_uninitialized_variables
-  var food;
-  // ignore: prefer_typing_uninitialized_variables
-  var coin;
-  // ignore: prefer_typing_uninitialized_variables
+  int? food;
+  int? coin;
   static var random;
-  // ignore: prefer_typing_uninitialized_variables
   static var randomCoin;
 
   late String currentPosition;
@@ -64,7 +60,7 @@ class _GameState extends State<Game> {
     // Initialize the snake and board
     initializeModels();
     // Initialize any random vars
-    initalizeRandoms();
+    initializeRandoms();
     // Initialize the food and coin items
     initializeItems();
     // start the game loop
@@ -87,21 +83,21 @@ class _GameState extends State<Game> {
 
     Random rand = Random();
     final direction = rand.nextInt(3);
-    final positioni = rand.nextInt(botRange);
+    final position = rand.nextInt(botRange);
 
     snake = Snake(
-        name: "default",
-        color: Colors.orange,
-        direction: directions[direction],
-        coins: 0,
-        diamonds: 0,
-        price: 0,
-        score: 0,
-        positions:
-            generateRandomPositionList(directions[direction], positioni, 5));
+      name: "default",
+      color: Colors.orange,
+      direction: directions[direction],
+      coins: 0,
+      diamonds: 0,
+      price: 0,
+      score: 0,
+      positions: generateRandomPositionList(directions[direction], position, 5),
+    );
   }
 
-  initalizeRandoms() {
+  initializeRandoms() {
     random = Random();
     randomCoin = Random();
   }
@@ -147,13 +143,18 @@ class _GameState extends State<Game> {
     timer.cancel();
     await saveProgress();
     removeBots();
-    showGameOverDialog(context, snake, () {
-      restartGame();
-      Navigator.pop(context);
-    }, () {
-      Navigator.pop(context);
-      routeService.navigate(0);
-    });
+    showGameOverDialog(
+      context,
+      snake,
+      () {
+        restartGame();
+        Navigator.pop(context);
+      },
+      () {
+        Navigator.pop(context);
+        routeService.navigate(0);
+      },
+    );
   }
 
   saveProgress() async {
@@ -233,23 +234,28 @@ class _GameState extends State<Game> {
   spawnBots() {
     var direction = random.nextInt(3);
     var position = random.nextInt(botRange);
-    var positions =
-        generateRandomPositionList(directions[direction], position, 5);
+    var positions = generateRandomPositionList(
+      directions[direction],
+      position,
+      5,
+    );
     Snake bot1 = Snake(
-        name: "bot 1",
-        color: Colors.red,
-        direction: directions[direction],
-        score: 0,
-        positions: positions);
+      name: "bot 1",
+      color: Colors.red,
+      direction: directions[direction],
+      score: 0,
+      positions: positions,
+    );
     setState(() {
       placeHolderBots.add(bot1);
     });
     Future.delayed(
-        const Duration(seconds: 3),
-        () => setState(() {
-              placeHolderBots.remove(bot1);
-              bots.add(bot1);
-            }));
+      const Duration(seconds: 3),
+      () => setState(() {
+        placeHolderBots.remove(bot1);
+        bots.add(bot1);
+      }),
+    );
   }
 
   moveSnake() {
@@ -310,7 +316,10 @@ class _GameState extends State<Game> {
   /// Returns:
   ///   A list of integers.
   generateRandomPositionList(
-      String direction, int initialPosition, int snakeLength) {
+    String direction,
+    int initialPosition,
+    int snakeLength,
+  ) {
     List<int> positionsList = [];
     positionsList.add(initialPosition);
     for (var i = 0; i < snakeLength - 1; i++) {
@@ -372,32 +381,34 @@ class _GameState extends State<Game> {
                 }
               },
               child: GridView.builder(
-                  itemCount: numberOfSquares,
-                  physics: const NeverScrollableScrollPhysics(),
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 20),
-                  itemBuilder: (context, index) {
-                    if (snake.positions.contains(index)) {
-                      return snakePart();
-                    } else if (food == index) {
-                      return foodPart();
-                    } else if (coin == index) {
-                      return coinPart();
-                    } else {
-                      for (var i = 0; i < bots.length; i++) {
-                        if (bots[i].positions.contains(index)) {
-                          return botPart();
-                        }
-                      }
-                      for (var i = 0; i < placeHolderBots.length; i++) {
-                        if (placeHolderBots[i].positions.contains(index)) {
-                          // ignore: prefer_const_constructors
-                          return PlaceHolderBot();
-                        }
+                itemCount: numberOfSquares,
+                physics: const NeverScrollableScrollPhysics(),
+                gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
+                  crossAxisCount: 20,
+                ),
+                itemBuilder: (context, index) {
+                  if (snake.positions.contains(index)) {
+                    return snakePart();
+                  } else if (food == index) {
+                    return foodPart();
+                  } else if (coin == index) {
+                    return coinPart();
+                  } else {
+                    for (var i = 0; i < bots.length; i++) {
+                      if (bots[i].positions.contains(index)) {
+                        return botPart();
                       }
                     }
-                    return boardSquare();
-                  }),
+                    for (var i = 0; i < placeHolderBots.length; i++) {
+                      if (placeHolderBots[i].positions.contains(index)) {
+                        // ignore: prefer_const_constructors
+                        return PlaceHolderBot();
+                      }
+                    }
+                  }
+                  return boardSquare();
+                },
+              ),
             ),
             Align(
               alignment: Alignment.topCenter,
@@ -405,10 +416,7 @@ class _GameState extends State<Game> {
                 padding: const EdgeInsets.all(15.0),
                 child: Row(
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: <Widget>[
-                    _scoreWidget(),
-                    _coinsWidget(),
-                  ],
+                  children: <Widget>[_scoreWidget(), _coinsWidget()],
                 ),
               ),
             ),
@@ -423,8 +431,9 @@ class _GameState extends State<Game> {
       padding: const EdgeInsets.all(2.0),
       child: Container(
         decoration: BoxDecoration(
-            color: Colors.grey[900]!.withOpacity(.4),
-            borderRadius: BorderRadius.circular(5)),
+          color: Colors.grey[900]!.withValues(alpha: 0.4),
+          borderRadius: BorderRadius.circular(5),
+        ),
       ),
     );
   }
@@ -435,7 +444,9 @@ class _GameState extends State<Game> {
       child: Container(
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-            color: Colors.orange, borderRadius: BorderRadius.circular(5)),
+          color: Colors.orange,
+          borderRadius: BorderRadius.circular(5),
+        ),
       ),
     );
   }
@@ -446,7 +457,9 @@ class _GameState extends State<Game> {
       child: Container(
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-            color: Colors.red, borderRadius: BorderRadius.circular(5)),
+          color: Colors.red,
+          borderRadius: BorderRadius.circular(5),
+        ),
       ),
     );
   }
@@ -457,7 +470,9 @@ class _GameState extends State<Game> {
       child: Container(
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-            color: Colors.orange, borderRadius: BorderRadius.circular(5)),
+          color: Colors.orange,
+          borderRadius: BorderRadius.circular(5),
+        ),
       ),
     );
   }
@@ -468,7 +483,9 @@ class _GameState extends State<Game> {
       child: Container(
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-            color: Colors.yellow, borderRadius: BorderRadius.circular(5)),
+          color: Colors.yellow,
+          borderRadius: BorderRadius.circular(5),
+        ),
         child: Image.asset("assets/img/singlecoin.png"),
       ),
     );
@@ -480,11 +497,17 @@ class _GameState extends State<Game> {
       children: [
         Text(
           "Score: ",
-          style: TextStyle(color: Colors.white.withOpacity(.5), fontSize: 25),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.5),
+            fontSize: 25,
+          ),
         ),
         Text(
           snake.score.toString(),
-          style: TextStyle(color: Colors.white.withOpacity(.5), fontSize: 25),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.5),
+            fontSize: 25,
+          ),
         ),
       ],
     );
@@ -494,16 +517,14 @@ class _GameState extends State<Game> {
     return Row(
       mainAxisAlignment: MainAxisAlignment.center,
       children: [
-        Image.asset(
-          "assets/img/singlecoin.png",
-          width: 25,
-        ),
-        const SizedBox(
-          width: 5,
-        ),
+        Image.asset("assets/img/singlecoin.png", width: 25),
+        const SizedBox(width: 5),
         Text(
           snake.coins.toString(),
-          style: TextStyle(color: Colors.white.withOpacity(.5), fontSize: 25),
+          style: TextStyle(
+            color: Colors.white.withValues(alpha: 0.5),
+            fontSize: 25,
+          ),
         ),
       ],
     );

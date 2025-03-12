@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 class PlaceHolderBot extends StatefulWidget {
-  const PlaceHolderBot({Key? key}) : super(key: key);
+  const PlaceHolderBot({super.key});
 
   @override
   State<PlaceHolderBot> createState() => _PlaceHolderBotState();
@@ -15,7 +15,9 @@ class _PlaceHolderBotState extends State<PlaceHolderBot>
   void initState() {
     super.initState();
     controller = AnimationController(
-        duration: const Duration(milliseconds: 1500), vsync: this);
+      duration: const Duration(milliseconds: 1500),
+      vsync: this,
+    );
     animation = Tween<double>(begin: 0, end: 1).animate(controller)
       ..addStatusListener((status) {
         if (status == AnimationStatus.completed) {
@@ -40,8 +42,9 @@ class _PlaceHolderBotState extends State<PlaceHolderBot>
       child: Container(
         padding: const EdgeInsets.all(2),
         decoration: BoxDecoration(
-            color: Colors.red.withOpacity(animation.value),
-            borderRadius: BorderRadius.circular(5)),
+          color: Colors.red.withValues(alpha: animation.value),
+          borderRadius: BorderRadius.circular(5),
+        ),
       ),
     );
   }
